@@ -9,6 +9,7 @@ import time
 import Goban 
 from random import choice
 from playerInterface import *
+from AlphaBeta import AlphaBeta
 
 class myPlayer(PlayerInterface):
     ''' Example of a random player for the go. The only tricky part is to be able to handle
@@ -20,17 +21,26 @@ class myPlayer(PlayerInterface):
     def __init__(self):
         self._board = Goban.Board()
         self._mycolor = None
+        self._behavior = AlphaBeta(self._mycolor)
 
     def getPlayerName(self):
-        return "Random Player"
+        return "Floryannator"
 
     def getPlayerMove(self):
         if self._board.is_game_over():
             print("Referee told me to play but the game is over!")
             return "PASS" 
-        moves = self._board.legal_moves() # Dont use weak_legal_moves() here!
-        move = choice(moves) 
+
+
+        # TODO
+        #moves = self._board.legal_moves() # Dont use weak_legal_moves() here!
+        #move = choice(moves) 
+        #self._board.push(move)
+
+        move = self._behavior.get_best_move(self._board)
         self._board.push(move)
+        #end TODO
+
 
         # New here: allows to consider internal representations of moves
         print("I am playing ", self._board.move_to_str(move))
