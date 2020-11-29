@@ -37,7 +37,9 @@ class myPlayer(PlayerInterface):
         #move = choice(moves) 
         #self._board.push(move)
 
-        move = self._behavior.get_best_move(self._board)
+        print("GOOOOOOOOOOOOOOOOOOOOOOOOOO\n")
+
+        move = self._behavior.choose_move(self._board)
         self._board.push(move)
         #end TODO
 
