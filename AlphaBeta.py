@@ -7,12 +7,12 @@ from Heuristic_1 import Heuristic_1
 
 class AlphaBeta:
 
-    def __init__(self, color):
+    def __init__(self):
         self._heuristic = Heuristic_1()
-        self._color = color
+        self._color = None
         self.timeExe = 0
         self.time = 0
-        self.timeToExe = 0.5
+        self.timeToExe = 1
         self.diffTime = 0.01
 
     def choose_move(self, board):

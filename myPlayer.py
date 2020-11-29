@@ -21,7 +21,7 @@ class myPlayer(PlayerInterface):
     def __init__(self):
         self._board = Goban.Board()
         self._mycolor = None
-        self._behavior = AlphaBeta(self._mycolor)
+        self._behavior = AlphaBeta()
 
     def getPlayerName(self):
         return "Floryannator"
@@ -36,8 +36,6 @@ class myPlayer(PlayerInterface):
         #moves = self._board.legal_moves() # Dont use weak_legal_moves() here!
         #move = choice(moves) 
         #self._board.push(move)
-
-        print("GOOOOOOOOOOOOOOOOOOOOOOOOOO\n")
 
         move = self._behavior.choose_move(self._board)
         self._board.push(move)
@@ -59,6 +57,8 @@ class myPlayer(PlayerInterface):
     def newGame(self, color):
         self._mycolor = color
         self._opponent = Goban.Board.flip(color)
+
+        self._behavior._color = self._mycolor
 
     def endGame(self, winner):
         if self._mycolor == winner:

@@ -8,7 +8,7 @@ class Heuristic_1:
 
     def eval(self, board, color):
 
-        if(color == Goban.Board._WHITE):
+        if(color == Goban.Board._BLACK):
             sign = 1
         else:
             sign = -1
@@ -17,5 +17,5 @@ class Heuristic_1:
 
         #return sign * board._nbWHITE - sign * board._nbBLACK
 
-        return white * sign - black * sign
+        return black * sign - white * sign
     
