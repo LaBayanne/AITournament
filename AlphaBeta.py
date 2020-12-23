@@ -4,6 +4,8 @@ import time
 import Goban
 import numpy as np
 from Heuristic_1 import Heuristic_1
+from Heuristic_2 import Heuristic_2
+from Heuristic_3 import Heuristic_3
 
 class AlphaBeta:
 
@@ -14,6 +16,18 @@ class AlphaBeta:
         self.time = 0
         self.timeToExe = 1
         self.diffTime = 0.01
+
+    def set_heuristic_start(self):
+        self._heuristic = Heuristic_1()
+        self.timeToExe = 0.5
+
+    def set_heuristic_mid(self):
+        self._heuristic = Heuristic_2()
+        self.timeToExe = 5
+
+    def set_heuristic_end(self):
+        self._heuristic = Heuristic_3()
+        self.timeToExe = 3
 
     def choose_move(self, board):
 
@@ -29,13 +43,14 @@ class AlphaBeta:
         while(self.timeExe < self.timeToExe - self.diffTime):
             
             newMove = self.get_best_move(board, alpha, beta, maxDepth)
+
+            print("_________________________________________________")
             if(newMove == None):
                 break
             bestMove = newMove
             maxDepth += 1
 
         if(bestMove == None):
-            print("Yolo\n")
             bestMove = board.legal_moves()[0]
         
         tmpTime = time.time()
@@ -67,7 +82,7 @@ class AlphaBeta:
                     break
                 board.pop()
 
-            newScore = self.minNode(board, alpha, beta, h - 1)
+            newScore = self.minNode(board, alpha, beta, h - 1, move)
             board.pop()
 
             if(newScore == None):
@@ -86,9 +101,7 @@ class AlphaBeta:
 
         return bestMove
 
-    def maxNode(self, board, alpha, beta, h):
-
-        print("Max",end='')
+    def maxNode(self, board, alpha, beta, h, move):
 
         tmpTime = time.time()
         self.timeExe += time.time() - self.time
@@ -97,7 +110,7 @@ class AlphaBeta:
             return None
 
         if board.is_game_over() or h == 0:
-            return self._heuristic.eval(board, self._color)
+            return self._heuristic.eval(board, self._color, move)
 
         score = -np.inf
 
@@ -108,7 +121,7 @@ class AlphaBeta:
                     break
                 board.pop()
 
-            newScore = self.minNode(board, alpha, beta, h - 1)
+            newScore = self.minNode(board, alpha, beta, h - 1, move)
             board.pop()
 
             if(newScore == None):
@@ -123,9 +136,7 @@ class AlphaBeta:
             
         return score
 
-    def minNode(self, board, alpha, beta, h):
-
-        print("Min", end='')
+    def minNode(self, board, alpha, beta, h, move):
 
         tmpTime = time.time()
         self.timeExe += time.time() - self.time
@@ -134,7 +145,7 @@ class AlphaBeta:
             return None
 
         if board.is_game_over() or h == 0:
-            return self._heuristic.eval(board, self._color)
+            return self._heuristic.eval(board, self._color, move)
 
         score = np.inf
 
@@ -145,7 +156,7 @@ class AlphaBeta:
                     break
                 board.pop()
 
-            newScore = self.maxNode(board, alpha, beta, h - 1)
+            newScore = self.maxNode(board, alpha, beta, h - 1, move)
             board.pop()
 
             if(newScore == None):

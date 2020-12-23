@@ -10,6 +10,7 @@ import Goban
 from random import choice
 from playerInterface import *
 from AlphaBeta import AlphaBeta
+from MonteCarlo import MonteCarlo
 
 class myPlayer(PlayerInterface):
     ''' Example of a random player for the go. The only tricky part is to be able to handle
@@ -22,6 +23,10 @@ class myPlayer(PlayerInterface):
         self._board = Goban.Board()
         self._mycolor = None
         self._behavior = AlphaBeta()
+        self._nbCoup = 0
+        self._movePossible1 = {"B2", "C3", "G3", "H2", "A5", "J5", "B8", "H8", "D9", "F8"}
+        self._movePossible2 = {"D2", "F2", "B5", "H5", "C7", "G7", "E8", "A4", "J4"}
+        self._time = 0
 
     def getPlayerName(self):
         return "Floryannator"
@@ -33,12 +38,44 @@ class myPlayer(PlayerInterface):
 
 
         # TODO
-        #moves = self._board.legal_moves() # Dont use weak_legal_moves() here!
-        #move = choice(moves) 
-        #self._board.push(move)
 
+        startTime = time.time()
+
+        self._nbCoup += 1
+
+        #Début de partie, soit avant nos 12 premiers coups, soit avant 24 pions de placés
+        if self._board._nbBLACK + self._board._nbWHITE < 24:
+            self._behavior.set_heuristic_start()
+
+        #Milieu de partie, soit après nos 12 premiers coups, soit après 24 pions de placés
+        if self._board._nbBLACK + self._board._nbWHITE > 24:
+            self._behavior.set_heuristic_mid()
+
+        #Fin de partie, soit 70% du plateau rempli, soit 56 pions placés
+        if self._board._nbBLACK + self._board._nbWHITE > 56:
+            self._behavior.set_heuristic_end()
+        
+        '''m = False
+        if self._nbCoup < 11:
+            for move in self._board.legal_moves():
+                if self._board.flat_to_name(move) in self._movePossible1:
+                    self._board.push(move)
+                    m = True
+                    break
+            if m == False:
+                for move in self._board.legal_moves():
+                    if self._board.flat_to_name(move) in self._movePossible2:
+                        self._board.push(move)
+                        break
+        else:'''
         move = self._behavior.choose_move(self._board)
         self._board.push(move)
+
+        
+
+        self._time += time.time() - startTime
+        print("My total time = " + str(self._time))
+
         #end TODO
 
 
@@ -52,7 +89,8 @@ class myPlayer(PlayerInterface):
     def playOpponentMove(self, move):
         print("Opponent played ", move) # New here
         # the board needs an internal represetation to push the move.  Not a string
-        self._board.push(Goban.Board.name_to_flat(move)) 
+        move = Goban.Board.name_to_flat(move)
+        self._board.push(move) 
 
     def newGame(self, color):
         self._mycolor = color
