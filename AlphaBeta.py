@@ -48,7 +48,7 @@ class AlphaBeta:
             if(newMove == None):
                 break
             bestMove = newMove
-            maxDepth += 1
+            maxDepth += 2
 
         if(bestMove == None):
             bestMove = board.legal_moves()[0]
@@ -88,13 +88,11 @@ class AlphaBeta:
             if(newScore == None):
                 return None
 
-            newScore = max(score, newScore)
-
             if(newScore > score):
                 bestMove = move
                 score = newScore
 
-            if(alpha >= beta):
+            if(score >= beta):
                 return bestMove
                 
             alpha = max(alpha, score)
@@ -110,7 +108,7 @@ class AlphaBeta:
             return None
 
         if board.is_game_over() or h == 0:
-            return self._heuristic.eval(board, self._color, move)
+            return self._heuristic.eval(board, self._color, move, 2)
 
         score = -np.inf
 
@@ -129,10 +127,11 @@ class AlphaBeta:
 
             score = max(score, newScore)
 
+            alpha = max(alpha, score)  
+
             if(alpha >= beta):
                 return score
 
-            alpha = max(alpha, score)            
             
         return score
 
@@ -145,7 +144,7 @@ class AlphaBeta:
             return None
 
         if board.is_game_over() or h == 0:
-            return self._heuristic.eval(board, self._color, move)
+            return self._heuristic.eval(board, self._color, move, 1)
 
         score = np.inf
 
@@ -164,10 +163,11 @@ class AlphaBeta:
 
             score = min(score, newScore)
 
+            beta = min(beta, score)
+
             if(alpha >= beta):
                 return score
 
-            beta = min(beta, score)
 
 
         return score

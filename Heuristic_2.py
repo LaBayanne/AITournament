@@ -7,7 +7,7 @@ class Heuristic_2:
     def __init__(self):
         pass
 
-    def eval(self, board, color, move):
+    def eval(self, board, color, move, player):
         poids = {"C3": 80, "C4": 80, "C5": 80, "C6": 80, "D3": 80, "D4": 80, "D5": 80, "D6": 80, "D7": 80,"E3": 80, "E4": 80, "E5": 80, "E6": 80, "E7": 80,"F3": 80, "F4": 80, "F5": 80, "F6": 80, "F7": 80, "G3": 80, "G4": 80, "G5": 80, "G6": 80, "G7": 80,
                  "B3": 60, "B4": 60, "B5": 60, "B6": 60, "B7": 60, "C2" : 60, "C7":60 , "C8":60, "D2":60 , "D8":60, "E2":60 , "E8":60, "F2":60 , "F8":60, "G2":60 , "G8":60, "H4":60, "H5":60 , "H6":60,"H7":60,
                  "B2":40, "B8":40, "H2":40, "H3":40, "H8":40,
@@ -16,12 +16,17 @@ class Heuristic_2:
 
         (black, white) = board.compute_score()
 
-        black *= 5
-        white *= 5
+        black *= 8
+        white *= 8
+
+        if(player == 1):
+            value = poids[board.flat_to_name(move)]
+        else:
+            value = -poids[board.flat_to_name(move)]
 
         if(color == Goban.Board._WHITE):
             sign = 1
-            return (white + poids[board.flat_to_name(move)]) * sign - black * sign 
+            return (white + value) * sign - black * sign 
         else:
             sign = -1
-            return white * sign - (black + poids[board.flat_to_name(move)]) * sign 
+            return white * sign - (black + value) * sign 
