@@ -12,27 +12,27 @@ class AlphaBeta:
     def __init__(self):
         self._heuristic = Heuristic_1()
         self._color = None
-        self.timeExe = 0
-        self.time = 0
-        self.timeToExe = 1
-        self.diffTime = 0.01
+        self._timeExe = 0
+        self._time = 0
+        self._timeToExe = 1
+        self._diffTime = 0.01
 
     def set_heuristic_start(self):
         self._heuristic = Heuristic_1()
-        self.timeToExe = 0.5
+        self._timeToExe = 0.5
 
     def set_heuristic_mid(self):
         self._heuristic = Heuristic_2()
-        self.timeToExe = 5
+        self._timeToExe = 5
 
     def set_heuristic_end(self):
         self._heuristic = Heuristic_3()
-        self.timeToExe = 3
+        self._timeToExe = 3
 
     def choose_move(self, board):
 
-        self.time = time.time()
-        self.timeExe = 0
+        self._time = time.time()
+        self._timeExe = 0
         maxDepth = 1
 
         bestMove = None
@@ -40,11 +40,10 @@ class AlphaBeta:
         alpha = -np.inf
         beta = np.inf
 
-        while(self.timeExe < self.timeToExe - self.diffTime):
+        while(self._timeExe < self._timeToExe - self._diffTime):
             
             newMove = self.get_best_move(board, alpha, beta, maxDepth)
 
-            print("_________________________________________________")
             if(newMove == None):
                 break
             bestMove = newMove
@@ -54,57 +53,56 @@ class AlphaBeta:
             bestMove = board.legal_moves()[0]
         
         tmpTime = time.time()
-        self.timeExe += time.time() - self.time
-        self.time = tmpTime
+        self._timeExe += time.time() - self._time
+        self._time = tmpTime
 
         print("----------")
 
         print("Iterative deepening depth : " + str(maxDepth))
-        print("Research time : " + str(self.timeExe))
+        print("Research time : " + str(self._timeExe))
 
         return bestMove
 
     def get_best_move(self, board, alpha, beta, h):
 
         tmpTime = time.time()
-        self.timeExe += time.time() - self.time
-        self.time = tmpTime
-        if(self.timeExe >= self.timeToExe - self.diffTime):
+        self._timeExe += time.time() - self._time
+        self._time = tmpTime
+        if(self._timeExe >= self._timeToExe - self._diffTime):
             return None
 
         score = -np.inf
         bestMove = None
 
         for move in board.weak_legal_moves():
-            while True:
-                valid = board.push(move)
-                if valid:
-                    break
+            valid = board.push(move)
+            if valid:
+
+                newScore = self.minNode(board, alpha, beta, h - 1, move)
                 board.pop()
 
-            newScore = self.minNode(board, alpha, beta, h - 1, move)
-            board.pop()
+                if(newScore == None):
+                    return None
 
-            if(newScore == None):
-                return None
+                if(newScore > score):
+                    bestMove = move
+                    score = newScore
 
-            if(newScore > score):
-                bestMove = move
-                score = newScore
-
-            if(score >= beta):
-                return bestMove
-                
-            alpha = max(alpha, score)
+                if(score >= beta):
+                    return bestMove
+                    
+                alpha = max(alpha, score)
+            else:
+                board.pop()
 
         return bestMove
 
     def maxNode(self, board, alpha, beta, h, move):
 
         tmpTime = time.time()
-        self.timeExe += time.time() - self.time
-        self.time = tmpTime
-        if(self.timeExe >= self.timeToExe - self.diffTime):
+        self._timeExe += time.time() - self._time
+        self._time = tmpTime
+        if(self._timeExe >= self._timeToExe - self._diffTime):
             return None
 
         if board.is_game_over() or h == 0:
@@ -113,24 +111,23 @@ class AlphaBeta:
         score = -np.inf
 
         for move in board.weak_legal_moves():
-            while True:
-                valid = board.push(move)
-                if valid:
-                    break
+            valid = board.push(move)
+            if valid:
+
+                newScore = self.minNode(board, alpha, beta, h - 1, move)
                 board.pop()
 
-            newScore = self.minNode(board, alpha, beta, h - 1, move)
-            board.pop()
+                if(newScore == None):
+                    return None
 
-            if(newScore == None):
-                return None
+                score = max(score, newScore)
 
-            score = max(score, newScore)
+                alpha = max(alpha, score)  
 
-            alpha = max(alpha, score)  
-
-            if(alpha >= beta):
-                return score
+                if(alpha >= beta):
+                    return score
+            else:
+                board.pop()
 
             
         return score
@@ -138,9 +135,9 @@ class AlphaBeta:
     def minNode(self, board, alpha, beta, h, move):
 
         tmpTime = time.time()
-        self.timeExe += time.time() - self.time
-        self.time = tmpTime
-        if(self.timeExe >= self.timeToExe - self.diffTime):
+        self._timeExe += time.time() - self._time
+        self._time = tmpTime
+        if(self._timeExe >= self._timeToExe - self._diffTime):
             return None
 
         if board.is_game_over() or h == 0:
@@ -149,24 +146,23 @@ class AlphaBeta:
         score = np.inf
 
         for move in board.weak_legal_moves():
-            while True:
-                valid = board.push(move)
-                if valid:
-                    break
+            valid = board.push(move)
+            if valid:
+
+                newScore = self.maxNode(board, alpha, beta, h - 1, move)
                 board.pop()
 
-            newScore = self.maxNode(board, alpha, beta, h - 1, move)
-            board.pop()
+                if(newScore == None):
+                    return None
 
-            if(newScore == None):
-                return None
+                score = min(score, newScore)
 
-            score = min(score, newScore)
+                beta = min(beta, score)
 
-            beta = min(beta, score)
-
-            if(alpha >= beta):
-                return score
+                if(alpha >= beta):
+                    return score
+            else:
+                board.pop()
 
 
 

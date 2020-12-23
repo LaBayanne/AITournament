@@ -37,46 +37,47 @@ class myPlayer(PlayerInterface):
             return "PASS" 
 
 
-        # TODO
-
         startTime = time.time()
 
         self._nbCoup += 1
 
-        #Début de partie, soit avant nos 12 premiers coups, soit avant 24 pions de placés
-        if self._board._nbBLACK + self._board._nbWHITE < 24:
-            self._behavior.set_heuristic_start()
 
-        #Milieu de partie, soit après nos 12 premiers coups, soit après 24 pions de placés
-        if self._board._nbBLACK + self._board._nbWHITE > 24:
-            self._behavior.set_heuristic_mid()
+        hasPassed = False
 
-        #Fin de partie, soit 70% du plateau rempli, soit 56 pions placés
-        if self._board._nbBLACK + self._board._nbWHITE > 56:
-            self._behavior.set_heuristic_end()
-        
-        '''m = False
-        if self._nbCoup < 11:
-            for move in self._board.legal_moves():
-                if self._board.flat_to_name(move) in self._movePossible1:
-                    self._board.push(move)
-                    m = True
-                    break
-            if m == False:
-                for move in self._board.legal_moves():
-                    if self._board.flat_to_name(move) in self._movePossible2:
-                        self._board.push(move)
-                        break
-        else:'''
-        move = self._behavior.choose_move(self._board)
+        if(self._board._lastPlayerHasPassed):
+            (black, white) = self._board.compute_score()
+
+            if(self._mycolor == Goban.Board._WHITE):
+                if(white > black):
+                    move = Goban.Board.name_to_flat("PASS")
+                    hasPassed = True
+            else:
+                if(black > white):
+                    move = Goban.Board.name_to_flat("PASS")
+                    hasPassed = True
+
+
+        if(not hasPassed):
+            #Début de partie, soit avant nos 12 premiers coups, soit avant 24 pions de placés
+            if self._board._nbBLACK + self._board._nbWHITE < 24:
+                self._behavior.set_heuristic_start()
+
+            #Milieu de partie, soit après nos 12 premiers coups, soit après 24 pions de placés
+            if self._board._nbBLACK + self._board._nbWHITE > 24:
+                self._behavior.set_heuristic_mid()
+
+            #Fin de partie, soit 70% du plateau rempli, soit 56 pions placés
+            if self._board._nbBLACK + self._board._nbWHITE > 56:
+                self._behavior.set_heuristic_end()
+
+            move = self._behavior.choose_move(self._board)
+
+
+
         self._board.push(move)
-
         
-
         self._time += time.time() - startTime
         print("My total time = " + str(self._time))
-
-        #end TODO
 
 
         # New here: allows to consider internal representations of moves
@@ -84,6 +85,7 @@ class myPlayer(PlayerInterface):
         print("My current board :")
         self._board.prettyPrint()
         # move is an internal representation. To communicate with the interface I need to change if to a string
+
         return Goban.Board.flat_to_name(move) 
 
     def playOpponentMove(self, move):

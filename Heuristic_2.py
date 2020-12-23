@@ -16,8 +16,8 @@ class Heuristic_2:
 
         (black, white) = board.compute_score()
 
-        black *= 8
-        white *= 8
+        black *= 10
+        white *= 10
 
         if(player == 1):
             value = poids[board.flat_to_name(move)]
