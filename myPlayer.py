@@ -10,7 +10,6 @@ import Goban
 from random import choice
 from playerInterface import *
 from AlphaBeta import AlphaBeta
-from MonteCarlo import MonteCarlo
 
 class myPlayer(PlayerInterface):
     ''' Example of a random player for the go. The only tricky part is to be able to handle
